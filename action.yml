@@ -1,0 +1,34 @@
+# .github/actions/gcloud-setup/action.yml
+
+name: "GCloud Auth Setup"
+description: "Authenticates with Google Cloud"
+inputs:
+  GCP_SA_KEY:
+    required: true
+    description: "gcp service account json"
+  GCP_PROJECT_ID:
+    required: true
+    description: "gcp project id"
+  GCP_SA_EMAIL:
+    required: true
+    description: "gcp service account email"
+
+runs:
+  using: "composite"
+  steps:
+  - name: Authenticate with Google Cloud
+    uses: google-github-actions/auth@v1
+    with:
+      credentials_json: ${{ inputs.GCP_SA_KEY }}
+
+  - name: Set up gcloud
+    uses: google-github-actions/setup-gcloud@v1
+    with:
+      project_id: ${{ inputs.GCP_PROJECT_ID }}
+
+  - name: Set gcloud project and configs
+    shell: bash
+    run: |
+      gcloud --version
+      gcloud auth list
+      gcloud config set account ${{ inputs.GCP_SA_EMAIL }}
